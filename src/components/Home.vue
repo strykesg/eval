@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1>Home</h1>
+      <h1>League Schedule</h1>
       <p>Home</p>
     </div>
   </template>
