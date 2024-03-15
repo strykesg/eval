@@ -1,17 +1,30 @@
 <template>
-  <div class="welcomeMessage">
+  <div>
     <AppHeader />
-    <router-view />
+    <div class="pageContent">
+      <router-view />
+    </div>
+    <AppFooter />
   </div>
 </template>
+
+<script>
+import AppHeader from './components/layout/Header.vue'; 
+import AppFooter from './components/layout/Footer.vue'; 
+
+export default {
+  name: 'App',
+  components: {
+    AppHeader,
+    AppFooter,
+  },
+};
+</script>
 
 <style>
 @import "./index.css";
 
-.welcomeMessage {
-  margin: 120px auto;
-  width: 50%;
-  text-align: left;
-  font-size: 24px;
+.pageContent {
+  height: 87vh;
 }
 </style>
