@@ -14,13 +14,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(team, index) in leaderboardData" :key="team.teamName" :class="{ 'even-row': index % 2 === 1 }">
-              <td><img :src="`https://flagsapi.codeaid.io/${team.teamName}.png`" :alt="team.teamName" /> {{ team.teamName }}</td>
-              <td>{{ team.matchesPlayed }}</td>
-              <td  v-show="screenWidth > 500">{{ team.goalsFor }}</td>
-              <td  v-show="screenWidth > 500">{{ team.goalsAgainst }}</td>
+            <tr v-for="team in leaderboardData" :key="team.teamName">
+              <td><img :src="`https://flagsapi.codeaid.io/${team.teamName}.png`" /> <b>{{ team.teamName }}</b></td>
+              <td class="mp">{{ team.matchesPlayed }}</td>
+              <td class="gf" v-show="screenWidth > 500">{{ team.goalsFor }}</td>
+              <td class="ga" v-show="screenWidth > 500">{{ team.goalsAgainst }}</td>
               <td class="gd" v-show="screenWidth <= 500">{{ team.goalsFor - team.goalsAgainst }}</td>
-              <td><b>{{ team.points }}</b></td>
+              <td class="points"><b>{{ team.points }}</b></td>
             </tr>
           </tbody>
         </table>
@@ -44,10 +44,8 @@
       window.addEventListener('resize', this.handleResize);
       this.handleResize();
       const leagueService = new LeagueService();
-      // Assuming fetchData and getLeaderboard are already implemented
       await leagueService.fetchData();
       this.leaderboardData = leagueService.getLeaderboard();
-      console.log('leaderboard data', this.leaderboardData)
     },
     beforeUnmount() {
       window.removeEventListener('resize', this.handleResize);
@@ -113,6 +111,14 @@
    
     td b {
       font-size: 16px;
+    }
+
+    .mp, .gf, .ga, .gd, .points{
+      text-align: center;
+    }
+    
+    td.points{
+      color: #025FEB;
     }
 
     

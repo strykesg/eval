@@ -17,7 +17,7 @@
             <td v-show="screenWidth > 750">{{ formatDate(match.matchDate) }}</td>
             <td v-show="screenWidth > 1000">{{ match.stadium }}</td>
             <td class="bold team home">{{ match.homeTeam }} <img :src="`https://flagsapi.codeaid.io/${match.homeTeam}.png`" /></td> 
-            <td class="bold">{{match.homeTeamScore}}:{{match.awayTeamScore}}</td>
+            <td class="bold">{{match.homeTeamScore}} : {{match.awayTeamScore}}</td>
             <td class="bold team away"><img :src="`https://flagsapi.codeaid.io/${match.awayTeam}.png`" /> {{ match.awayTeam }}</td>
           </tr>
         </tbody>
