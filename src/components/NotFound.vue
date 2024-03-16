@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img src="/images/404.png" alt="League Web UI" />
+    <img src="/images/404.png" alt="League Web UI - Page Not Found (404)" />
   </div>
 </template>
 

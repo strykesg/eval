@@ -73,6 +73,7 @@ export default {
 };
 </script>
 <style scoped>
+/* Custom Table CSS (can be moved to seperate file, but can suffice here as it is scoped) */
 table {
   width: 90%;
   margin:auto;
