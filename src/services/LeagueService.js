@@ -11,6 +11,8 @@
 class LeagueService {    
     constructor() {
         this.matches = [];
+        this.apiVersion = null;
+        this.apiUrl = 'http://localhost:3001/api';
         this.apiBaseUrl = 'http://localhost:3001/api/v1';
     }
     /**
@@ -67,7 +69,59 @@ class LeagueService {
      * 
      * @returns {Array} List of teams representing the leaderboard.
      */
-    getLeaderboard() {}
+    getLeaderboard() {
+        const leaderboard = {};
+
+        // Process each match and calculate points and goals
+        this.matches.forEach(match => {
+            if (match.matchPlayed) {
+                const homeTeam = match.homeTeam;
+                const awayTeam = match.awayTeam;
+                const homeScore = match.homeTeamScore;
+                const awayScore = match.awayTeamScore;
+
+                // Initialize team stats
+                if (!leaderboard[homeTeam]) {
+                    leaderboard[homeTeam] = { teamName: homeTeam, matchesPlayed: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
+                }
+                if (!leaderboard[awayTeam]) {
+                    leaderboard[awayTeam] = { teamName: awayTeam, matchesPlayed: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
+                }
+
+                // Update matches played
+                leaderboard[homeTeam].matchesPlayed += 1;
+                leaderboard[awayTeam].matchesPlayed += 1;
+
+                // Update goals
+                leaderboard[homeTeam].goalsFor += homeScore;
+                leaderboard[awayTeam].goalsFor += awayScore;
+
+                leaderboard[homeTeam].goalsAgainst += awayScore;
+                leaderboard[awayTeam].goalsAgainst += homeScore;
+
+                // Assign points based on match result
+                if (homeScore > awayScore) {
+                    leaderboard[homeTeam].points += 3;
+                } else if (awayScore > homeScore) {
+                    leaderboard[awayTeam].points += 3;
+                } else {
+                    leaderboard[homeTeam].points += 1;
+                    leaderboard[awayTeam].points += 1;
+                }
+            }
+        });
+
+        const sortedLeaderboard = Object.values(leaderboard).sort((a, b) => {
+            // Sort by points, then goal difference, then goals for
+            if (b.points !== a.points) return b.points - a.points;
+            const goalDifferenceA = a.goalsFor - a.goalsAgainst;
+            const goalDifferenceB = b.goalsFor - b.goalsAgainst;
+            if (goalDifferenceB !== goalDifferenceA) return goalDifferenceB - goalDifferenceA;
+            return b.goalsFor - a.goalsFor;
+        });
+
+        return sortedLeaderboard;
+    }
     
     /**
      * Asynchronic function to fetch the data from the server.
@@ -100,9 +154,31 @@ class LeagueService {
             // Store the fetched matches
             this.setMatches(matchesData.matches);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            alert('Error fetching data: <br>' + error);
         }
     }    
+
+    setAPIVersion(version){
+        this.apiVersion = version;
+    }
+
+    getAPIVersion(){
+        return this.apiVersion;
+    }
+
+    async fetchAPIVersion(){
+        try {
+            const versionResponse = await fetch(`${this.apiUrl}/version`);
+            const versionData = await versionResponse.json();
+            if (!versionData.success) {
+                throw new Error('Failed to fetch API ., Unsuccessful');
+            }
+            this.setAPIVersion(versionData.version);
+
+        } catch (error){
+            console.log("Failed retrieving API Version",  error);
+        }
+    }
 }
 
 export default LeagueService;

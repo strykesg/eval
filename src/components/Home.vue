@@ -1,25 +1,24 @@
 <template>
   <div>
     <h1>League Schedule</h1>
-    {{ matches }}
     <div>
       <table>
         <thead>
           <tr>
-            <th>Date/Time</th>
-            <th>Stadium</th>
-            <th>Home Team</th>
+            <th v-show="screenWidth > 750">Date/Time</th>
+            <th v-show="screenWidth > 1000">Stadium</th>
+            <th class="home">Home Team</th>
             <th></th>
-            <th>Away Team</th>
+            <th class="away">Away Team</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(match, index) in matches" :key="index" :class="{ 'even-row': index % 2 === 0 }">
-            <td>{{ formatDate(match.matchDate) }}</td>
-            <td>{{ match.stadium }}</td>
-            <td class="bold">{{ match.homeTeam }}<img :src="`https://flagsapi.codeaid.io/${match.homeTeam}.png`" /></td> 
+            <td v-show="screenWidth > 750">{{ formatDate(match.matchDate) }}</td>
+            <td v-show="screenWidth > 1000">{{ match.stadium }}</td>
+            <td class="bold team home">{{ match.homeTeam }} <img :src="`https://flagsapi.codeaid.io/${match.homeTeam}.png`" /></td> 
             <td class="bold">{{match.homeTeamScore}}:{{match.awayTeamScore}}</td>
-            <td class="bold">{{ match.awayTeam }}<img :src="`https://flagsapi.codeaid.io/${match.awayTeam}.png`" /></td>
+            <td class="bold team away"><img :src="`https://flagsapi.codeaid.io/${match.awayTeam}.png`" /> {{ match.awayTeam }}</td>
           </tr>
         </tbody>
       </table>
@@ -35,7 +34,8 @@ export default {
   name: 'Home',
   data() {
     return {
-      matches: []
+      matches: [],
+      screenWidth: window.innerWidth
     };
   },
   methods: {
@@ -55,11 +55,21 @@ export default {
 
         return `${day}.${month}.${year} ${hours}:${minutes}`;
     },
+    handleResize() {
+      this.screenWidth = window.innerWidth;
+    }
    
   },
   mounted() {
       this.fetchMatches();
-  }
+  },
+  created(){
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  },
 
 };
 </script>
@@ -79,6 +89,19 @@ th {
   border: 1px solid #E4EDF2;
 }
 
+thead {
+  height: 40px;
+}
+
+tbody > tr {
+  height: 70px;
+}
+
+tbody > tr, tbody > tr >td {
+  border-left: none;
+  border-right: none;
+}
+
 td {
   font-size: 14px; 
   padding: 8px;
@@ -89,6 +112,18 @@ td.bold {
   font-size: 16px;
   font-weight: bold;
 }
+td.team {
+  
+  align-items: center;
+  justify-content: center;
+}
+.home {
+  text-align: right;
+}
+.away {
+  text-align: left;
+}
+
 td > img {
   width: 53px;
   height:37px;
