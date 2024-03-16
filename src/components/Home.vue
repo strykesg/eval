@@ -5,8 +5,8 @@
       <table>
         <thead>
           <tr>
-            <th v-show="screenWidth > 750">Date/Time</th>
-            <th v-show="screenWidth > 1000">Stadium</th>
+            <th v-show="screenWidth >= 750" class="align-left">Date/Time</th>
+            <th v-show="screenWidth >= 1000" class="align-left">Stadium</th>
             <th class="home">Home Team</th>
             <th></th>
             <th class="away">Away Team</th>
@@ -14,11 +14,11 @@
         </thead>
         <tbody>
           <tr v-for="(match, index) in matches" :key="index" :class="{ 'even-row': index % 2 === 0 }">
-            <td v-show="screenWidth > 750">{{ formatDate(match.matchDate) }}</td>
-            <td v-show="screenWidth > 1000">{{ match.stadium }}</td>
-            <td class="bold team home">{{ match.homeTeam }} <img :src="`https://flagsapi.codeaid.io/${match.homeTeam}.png`" /></td> 
+            <td v-show="screenWidth >= 750" v-html="formatDate(match.matchDate)" class="align-left"></td>
+            <td v-show="screenWidth >= 1000" class="align-left">{{ match.stadium }}</td>
+            <td class="bold "><span class="team home">{{ match.homeTeam }} <img :src="`https://flagsapi.codeaid.io/${match.homeTeam}.png`" /></span></td> 
             <td class="bold">{{match.homeTeamScore}} : {{match.awayTeamScore}}</td>
-            <td class="bold team away"><img :src="`https://flagsapi.codeaid.io/${match.awayTeam}.png`" /> {{ match.awayTeam }}</td>
+            <td class="bold "><span class="team away"><img :src="`https://flagsapi.codeaid.io/${match.awayTeam}.png`" /> {{ match.awayTeam }}</span></td>
           </tr>
         </tbody>
       </table>
@@ -40,20 +40,19 @@ export default {
   },
   methods: {
     async fetchMatches() {
-      console.log('fetching matches');
       const leagueService = new LeagueService();
       await leagueService.fetchData();
       this.matches = leagueService.getMatches();
     },
     formatDate(date) {
         const d = new Date(date);
-        const day = d.getDate().toString().padStart(2, '0');
-        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+        const day = d.getDate();
+        const month = d.getMonth() + 1;
         const year = d.getFullYear();
         const hours = d.getHours().toString().padStart(2, '0');
         const minutes = d.getMinutes().toString().padStart(2, '0');
 
-        return `${day}.${month}.${year} ${hours}:${minutes}`;
+        return `<div class='date-time'>${day}.${month}.${year} <br> <span class="time-right">${hours}:${minutes}</span></div>`;
     },
     handleResize() {
       this.screenWidth = window.innerWidth;
@@ -79,7 +78,6 @@ table {
   margin:auto;
   border-collapse: collapse;
   color: #4B5C68;
-  border: 1px solid #E4EDF2;
 }
 
 th {
@@ -112,19 +110,28 @@ td.bold {
   font-size: 16px;
   font-weight: bold;
 }
-td.team {
-  
+.team {
+  display: flex;
   align-items: center;
-  justify-content: center;
+  
+  border: none;
 }
 .home {
   text-align: right;
+  justify-content: right;
 }
 .away {
   text-align: left;
+  justify-content: left ;
+}
+.home img {
+  margin-left: 10px;
+}
+.away img {
+  margin-right: 10px;
 }
 
-td > img {
+td > span > img {
   width: 53px;
   height:37px;
 }
@@ -138,4 +145,10 @@ footer {
   color: #4B5C68;
   
 }
+.align-left {
+  position:relative;
+  text-align: left;
+}
+
+
 </style>

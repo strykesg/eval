@@ -28,4 +28,7 @@
         color:#FFFFFF;
         font-weight: 300;
     }
+    a img {
+      margin-right: 5px;
+    }
   </style>

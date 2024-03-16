@@ -2,6 +2,7 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: 'Open Sans', sans-serif;
 }
 
 body,
@@ -16,9 +17,10 @@ html {
 
 .pageContent {
   text-align: center;
-  margin-top: 60px;
-  height: calc(100vh - 160px);
-  max-height: calc(100vh - 160px);
+  padding-top: 60px;
+  height: calc(100vh - 100px);
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 
 h1 {
@@ -85,4 +87,13 @@ footer>.apiVersion {
   margin-right: 40px;
   text-align: right;
   font-weight: 800;
+}
+
+
+
+
+.date-time {
+  display:inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
