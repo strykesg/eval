@@ -2,11 +2,12 @@
     <header>
       <nav>
         <div class="logo">
-            Logo
+            <img src="/images/logo.svg" alt="League Web UI" />
         </div>
         <div class="routes">
             <ul class="nav-links">
-                                
+                <li><router-link to="/"><img src="/images/schedule.png" class="nav-icon" /> Schedule</router-link></li>
+                <li><router-link to="/leaderboard"><img src="/images/leaderboard.png" class="nav-icon" />Leaderboard</router-link></li>
             </ul>
         </div>
       </nav>
@@ -20,34 +21,11 @@
   </script>
   
   <style scoped>
-    nav {
-        padding: 0 40px;
-        display: flex;
-        align-items: center; 
-        justify-content: space-between;
-        height: 60px;
-        background: #025FEB;
-        color: #FFFFFF;
-        font-size: 16px;
-    }
-    .logo {
-        width: 110px;
-    }
-    .routes .nav-links {
-        list-style: none;
+    a {
         display: flex;
         align-items: center;
-        margin: 0;
-        padding: 0;
-    }
-
-    .routes .nav-links li {
-        margin-left: 20px;
-    }
-
-    .nav-icon {
-        width: 25px; 
-        height: 25px;
-        margin-left: 5px; 
+        text-decoration: none;
+        color:#FFFFFF;
+        font-weight: 300;
     }
   </style>

@@ -10,6 +10,11 @@ const routes = [
     component: Home,
   },
   {
+    path: '/schedule',
+    name: 'Schedule',
+    component: Home,
+  },
+  {
     path: '/leaderboard',
     name: 'Leaderboard',
     component: Leaderboard,

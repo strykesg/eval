@@ -11,6 +11,3 @@
   };
   </script>
   
-  <style scoped>
-  
-  </style>

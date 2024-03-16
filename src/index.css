@@ -3,3 +3,85 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.pageContent {
+  text-align: center;
+  margin-top: 60px;
+  height: calc(100vh - 160px);
+}
+
+h1 {
+  font-size: 24px;
+  color: #182C62;
+  margin-bottom: 20px;
+}
+
+/*
+
+HEADER NAVBAR
+
+*/
+
+nav {
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  background: #025FEB;
+  color: #FFFFFF;
+  font-size: 16px;
+}
+
+nav>.logo {
+  width: 110px;
+}
+
+nav>.routes .nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+nav>.routes .nav-links li {
+  margin-left: 20px;
+}
+
+.nav-icon {
+  width: 25px;
+  height: 25px;
+  margin-left: 5px;
+}
+
+/*
+
+FOOTER
+
+*/
+
+footer {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  height: 40px;
+  background: #F6F7F7;
+  color: #4B5C68
+}
+
+footer>.apiVersion {
+  margin-right: 40px;
+  text-align: right;
+  font-weight: 800;
+}

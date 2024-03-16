@@ -9,7 +9,10 @@
  * 
  */
 class LeagueService {    
-    
+    constructor() {
+        this.matches = [];
+        this.apiBaseUrl = 'http://localhost:3001/api/v1';
+    }
     /**
      * Sets the match schedule.
      * Match schedule will be given in the following form:
@@ -36,14 +39,18 @@ class LeagueService {
      * 
      * @param {Array} matches List of matches.
      */    
-    setMatches(matches) {}
+    setMatches(matches) {
+        this.matches = matches;
+    }
 
     /**
      * Returns the full list of matches.
      * 
      * @returns {Array} List of matches.
      */
-    getMatches() {}
+    getMatches() {
+        return this.matches;
+    }
 
     /**
      * Returns the leaderboard in a form of a list of JSON objecs.
@@ -65,7 +72,37 @@ class LeagueService {
     /**
      * Asynchronic function to fetch the data from the server.
      */
-    async fetchData() {}    
+    async fetchData() {
+        try {
+            // Fetch access token
+            const accessTokenResponse = await fetch(`${this.apiBaseUrl}/getAccessToken`);
+            const accessTokenData = await accessTokenResponse.json();
+
+            if (!accessTokenData.success) {
+                throw new Error('Failed to fetch access token');
+            }
+
+            const { access_token } = accessTokenData;
+
+            // Fetch matches using the access token
+            const matchesResponse = await fetch(`${this.apiBaseUrl}/getAllMatches`, {
+                headers: { 
+                    Authorization: `Bearer ${access_token}` 
+                }
+            });
+
+            const matchesData = await matchesResponse.json();
+
+            if (!matchesData.success) {
+                throw new Error('Failed to fetch matches');
+            }
+
+            // Store the fetched matches
+            this.setMatches(matchesData.matches);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }    
 }
 
 export default LeagueService;
