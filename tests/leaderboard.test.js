@@ -68,7 +68,7 @@ describe("leagueService", () => {
 
 });
 
-describe("laderboard", () => {
+describe("leaderboard", () => {
   let leagueService;
 
   beforeEach(() => {
@@ -107,5 +107,67 @@ describe("laderboard", () => {
     expect(secondTeam.goalsFor).toBe(1);
     expect(secondTeam.goalsAgainst).toBe(2);
     expect(secondTeam.points).toBe(0);
+  });
+});
+
+describe("leaderboardGeneration", () => {
+  let leagueService;
+
+  beforeEach(() => {
+    fetch.resetMocks();
+    leagueService = new LeagueService();
+  });
+
+  test("points are correctly assigned for wins and draws", () => {
+    const matches = [
+      { matchDate: "2023-04-01", homeTeam: "Team A", awayTeam: "Team B", matchPlayed: true, homeTeamScore: 2, awayTeamScore: 1 }, // Team A wins
+      { matchDate: "2023-04-02", homeTeam: "Team C", awayTeam: "Team D", matchPlayed: true, homeTeamScore: 1, awayTeamScore: 1 }, // Draw
+    ];
+    leagueService.setMatches(matches);
+    const leaderboard = leagueService.getLeaderboard();
+
+    // Team A should have 3 points
+    const teamA = leaderboard.find(team => team.teamName === "Team A");
+    expect(teamA.points).toBe(3);
+
+    // Team C and Team D should each have 1 point
+    const teamC = leaderboard.find(team => team.teamName === "Team C");
+    const teamD = leaderboard.find(team => team.teamName === "Team D");
+    expect(teamC.points).toBe(1);
+    expect(teamD.points).toBe(1);
+  });
+
+  test("leaderboard orders teams by points, then by head-to-head points", () => {
+    const matches = [
+      { matchDate: "2023-04-01", homeTeam: "Team A", awayTeam: "Team B", matchPlayed: true, homeTeamScore: 2, awayTeamScore: 0 }, // Team A wins
+      { matchDate: "2023-04-02", homeTeam: "Team A", awayTeam: "Team C", matchPlayed: true, homeTeamScore: 1, awayTeamScore: 1 }, // Draw
+      { matchDate: "2023-04-03", homeTeam: "Team B", awayTeam: "Team C", matchPlayed: true, homeTeamScore: 0, awayTeamScore: 3 }, // Team C wins
+    ];
+    leagueService.setMatches(matches);
+    const leaderboard = leagueService.getLeaderboard();
+
+    // Team C should be first due to head-to-head win against Team B
+    expect(leaderboard[0].teamName).toBe("Team C");
+    expect(leaderboard[1].teamName).toBe("Team A");
+    expect(leaderboard[2].teamName).toBe("Team B");
+  });
+
+  test("tiebreakers: goal difference, scored goals, and alphabetic order", () => {
+    const matches = [
+      { matchDate: "2023-04-01", homeTeam: "Team A", awayTeam: "Team B", matchPlayed: true, homeTeamScore: 3, awayTeamScore: 1 }, // Team A wins
+      { matchDate: "2023-04-02", homeTeam: "Team C", awayTeam: "Team D", matchPlayed: true, homeTeamScore: 2, awayTeamScore: 2 }, // Draw
+      { matchDate: "2023-04-03", homeTeam: "Team E", awayTeam: "Team F", matchPlayed: true, homeTeamScore: 1, awayTeamScore: 1 }, // Draw
+    ];
+    leagueService.setMatches(matches);
+    const leaderboard = leagueService.getLeaderboard();
+
+    // Team A should be first due to highest points
+    expect(leaderboard[0].teamName).toBe("Team A");
+
+    // Teams C, D, E, F should have the same points but sorted by goal difference, then goals for, then alphabetically
+    expect(leaderboard[1].teamName).toBe("Team C"); // Higher goal difference
+    expect(leaderboard[2].teamName).toBe("Team D"); // Same goal difference as C but lower alphabetically
+    expect(leaderboard[3].teamName).toBe("Team E"); // Lower goal difference but higher alphabetically than F
+    expect(leaderboard[4].teamName).toBe("Team F"); // Same points and goal difference as E but lower alphabetically
   });
 });

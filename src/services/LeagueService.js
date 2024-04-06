@@ -71,7 +71,7 @@ class LeagueService {
      */
     getLeaderboard() {
         const leaderboard = {};
-
+    
         // Process each match and calculate points and goals
         this.matches.forEach(match => {
             if (match.matchPlayed) {
@@ -79,48 +79,82 @@ class LeagueService {
                 const awayTeam = match.awayTeam;
                 const homeScore = match.homeTeamScore;
                 const awayScore = match.awayTeamScore;
-
+    
                 // Initialize team stats
                 if (!leaderboard[homeTeam]) {
-                    leaderboard[homeTeam] = { teamName: homeTeam, matchesPlayed: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
+                    leaderboard[homeTeam] = { teamName: homeTeam, matchesPlayed: 0, goalsFor: 0, goalsAgainst: 0, points: 0, headToHead: {} };
                 }
                 if (!leaderboard[awayTeam]) {
-                    leaderboard[awayTeam] = { teamName: awayTeam, matchesPlayed: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
+                    leaderboard[awayTeam] = { teamName: awayTeam, matchesPlayed: 0, goalsFor: 0, goalsAgainst: 0, points: 0, headToHead: {} };
                 }
-
+    
                 // Update matches played
                 leaderboard[homeTeam].matchesPlayed += 1;
                 leaderboard[awayTeam].matchesPlayed += 1;
-
+    
                 // Update goals
                 leaderboard[homeTeam].goalsFor += homeScore;
                 leaderboard[awayTeam].goalsFor += awayScore;
-
+    
                 leaderboard[homeTeam].goalsAgainst += awayScore;
                 leaderboard[awayTeam].goalsAgainst += homeScore;
-
+    
                 // Assign points based on match result
                 if (homeScore > awayScore) {
                     leaderboard[homeTeam].points += 3;
+                    this.updateHeadToHead(leaderboard, homeTeam, awayTeam, 3, 0);
                 } else if (awayScore > homeScore) {
                     leaderboard[awayTeam].points += 3;
+                    this.updateHeadToHead(leaderboard, homeTeam, awayTeam, 0, 3);
                 } else {
                     leaderboard[homeTeam].points += 1;
                     leaderboard[awayTeam].points += 1;
+                    this.updateHeadToHead(leaderboard, homeTeam, awayTeam, 1, 1);
                 }
             }
         });
-
-        const sortedLeaderboard = Object.values(leaderboard).sort((a, b) => {
-            // Sort by points, then goal difference, then goals for
-            if (b.points !== a.points) return b.points - a.points;
-            const goalDifferenceA = a.goalsFor - a.goalsAgainst;
-            const goalDifferenceB = b.goalsFor - b.goalsAgainst;
-            if (goalDifferenceB !== goalDifferenceA) return goalDifferenceB - goalDifferenceA;
-            return b.goalsFor - a.goalsFor;
-        });
-
+    
+        // Convert to array and sort
+        let sortedLeaderboard = Object.values(leaderboard).sort((a, b) => this.sortLeaderboard(a, b));
+    
         return sortedLeaderboard;
+    }
+
+    updateHeadToHead(leaderboard, homeTeam, awayTeam, homePoints, awayPoints) {
+        if (!leaderboard[homeTeam].headToHead[awayTeam]) {
+            leaderboard[homeTeam].headToHead[awayTeam] = { points: 0, goalsFor: 0, goalsAgainst: 0 };
+        }
+        if (!leaderboard[awayTeam].headToHead[homeTeam]) {
+            leaderboard[awayTeam].headToHead[homeTeam] = { points: 0, goalsFor: 0, goalsAgainst: 0 };
+        }
+        leaderboard[homeTeam].headToHead[awayTeam].points += homePoints;
+        leaderboard[awayTeam].headToHead[homeTeam].points += awayPoints;
+    }
+    
+    sortLeaderboard(a, b) {
+        // Primary sort by points
+        if (b.points !== a.points) return b.points - a.points;
+    
+        // Secondary sort by head-to-head points
+        const headToHeadPoints = this.compareHeadToHead(a, b);
+        if (headToHeadPoints !== 0) return headToHeadPoints;
+    
+        // Tertiary sort by goal difference
+        const goalDifferenceA = a.goalsFor - a.goalsAgainst;
+        const goalDifferenceB = b.goalsFor - b.goalsAgainst;
+        if (goalDifferenceB !== goalDifferenceA) return goalDifferenceB - goalDifferenceA;
+    
+        // Quaternary sort by goals for
+        if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+    
+        // Final sort by team name
+        return a.teamName.localeCompare(b.teamName);
+    }
+    
+    compareHeadToHead(a, b) {
+        const aPointsAgainstB = a.headToHead[b.teamName] ? a.headToHead[b.teamName].points : 0;
+        const bPointsAgainstA = b.headToHead[a.teamName] ? b.headToHead[a.teamName].points : 0;
+        return bPointsAgainstA - aPointsAgainstB;
     }
     
     /**
