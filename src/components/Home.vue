@@ -13,7 +13,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(match, index) in matches" :key="index" :class="{ 'even-row': index % 2 === 0 }">
+          <tr v-for="(match, index) in matches" :key="index" :class="{ 'even-row': (index + 1) % 2 === 0 }">
             <td v-show="screenWidth >= 750" v-html="formatDate(match.matchDate)" class="align-left"></td>
             <td v-show="screenWidth >= 1000" class="align-left">{{ match.stadium }}</td>
             <td class="bold "><span class="team home">{{ match.homeTeam }} <img :src="`https://flagsapi.codeaid.io/${match.homeTeam}.png`" /></span></td> 
@@ -79,6 +79,7 @@ table {
   margin:auto;
   border-collapse: collapse;
   color: #4B5C68;
+  border: 1px solid #E4EDF2;
 }
 
 th {

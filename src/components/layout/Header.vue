@@ -26,7 +26,7 @@
         align-items: center;
         text-decoration: none;
         color:#FFFFFF;
-        font-weight: 300;
+        
     }
     a img {
       margin-right: 5px;

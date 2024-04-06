@@ -65,6 +65,7 @@
       margin: auto;
       border-collapse: collapse;
       color: #4B5C68;
+      border: 1px solid #E4EDF2;
     }
 
     thead {
