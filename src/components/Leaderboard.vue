@@ -14,7 +14,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="team in leaderboardData" :key="team.teamName">
+            <tr v-for="team in leaderboardData" :key="team.id">
               <td><img :src="`https://flagsapi.codeaid.io/${team.teamName}.png`" /> <b>{{ team.teamName }}</b></td>
               <td class="mp">{{ team.matchesPlayed }}</td>
               <td class="gf" v-show="screenWidth > 500">{{ team.goalsFor }}</td>
@@ -41,11 +41,16 @@
       };
     },
     async created() {
-      window.addEventListener('resize', this.handleResize);
-      this.handleResize();
-      const leagueService = new LeagueService();
-      await leagueService.fetchData();
-      this.leaderboardData = leagueService.getLeaderboard();
+    try {
+        window.addEventListener('resize', this.handleResize);
+        this.handleResize();
+        const leagueService = new LeagueService();
+        await leagueService.fetchData();
+        this.leaderboardData = leagueService.getLeaderboard();
+      } catch (error) {
+        alert("Failed to fetch leaderboard data:"+ error);
+        
+      }
     },
     beforeUnmount() {
       window.removeEventListener('resize', this.handleResize);
