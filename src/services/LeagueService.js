@@ -12,8 +12,8 @@ class LeagueService {
     constructor() {
         this.matches = [];
         this.apiVersion = null;
-        this.apiUrl = 'http://localhost:3001/api';
-        this.apiBaseUrl = 'http://localhost:3001/api/v1';
+        this.apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3001/api';
+        this.apiBaseUrl = `${this.apiUrl}/v1`;
     }
     /**
      * Sets the match schedule.
