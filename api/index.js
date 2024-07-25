@@ -1,5 +1,6 @@
 const fs = require("fs").promises;
 const path = require("path");
+const url = require("url");
 
 let config = null;
 
@@ -19,7 +20,10 @@ module.exports = async (req, res) => {
       await loadConfig();
     }
 
-    const { pathname, method } = req;
+    const parsedUrl = url.parse(req.url, true);
+    const { pathname } = parsedUrl;
+    const method = req.method;
+
     const endpoint = config.api.find(
       (api) => api.path === pathname && (api.method === method || method === 'OPTIONS')
     );
